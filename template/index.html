@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles/styles-reset.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles/styles.css') }}">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storages!</title>
+</head>
+
+<script>
+
+// Stop the form resubmission on page refresh
+
+if ( window.history.replaceState ) {
+
+window.history.replaceState( null, null, window.location.href );
+
+}
+
+</script>
+<body>
+    <main>
+        <header class="main_menu">
+            Dodaj magazyn!
+        </header>
+        <section class="main_section">
+            {% for Storage in Storages %}
+            <section class="storage">
+                <header>
+                    <form class="storages">
+                        <input type="submit" class="storage_input {{Storage.content}}" value="{{Storage}}">
+                    </form>
+                </header>
+                <article>
+                    <section class="menu">
+                        <form method="post">
+                            <ul>
+                                <li><input type="text" name="blink" placeholder='Link' required></li>
+                                <li><input type="number" name="quantity" min="0" placeholder='Ilość' required></li>
+                                {% if Storage.content == 'Parts' %}
+                                    <li><input type="text" name="type" placeholder='Typ' required></li>
+                                    <li><input type="text" name="color" placeholder='Kolor' required></li>
+                                {% elif Storage.content == 'Minifigures' %}
+                                    <li><input type="text" name="Parts-name" placeholder='Części' required></li>
+                                {% elif Storage.content == 'Sets' %}
+                                    <li><input type="text" name="theme" placeholder='Seria' required></li>
+                                    <li><input type="text" name="year" placeholder='Rok kupna' required></li>
+                                    <li><input type="text" name="mylist" placeholder='Moja lista' required></li>
+                                    <li><input type="text" name="Parts" placeholder='Części' required></li>
+                                    <li><input type="text" name="year_of_purchase" placeholder='Rok wydania' required></li>
+                                {% endif %}
+                                <li><input type="submit" name="add_elof_{{Storage.name}}" value="Dodaj" required></li>
+                            </ul>
+                        </form>
+                    </section>
+                    {% for item in Storage.collection %}
+                        <section class="part">
+                            <ul>
+                                <li>Nazwa: {{ item.name }}</li>
+                                <li><img src="{{ item.img }}" class="img"></li>
+                                <li>ID: {{ item.id }}</li>
+                                <li>Cena: {{ item.price }} zł</li>
+                                <li>Posiadana ilość: {{ item.quantity }}</li>
+                                <li><a href="{{ item.blink }}">Bricklink</a></li>
+                                {% if Storage.content == 'Parts' %}
+                                    <li>{{ item.type }}</li>
+                                    <li>{{ item.color }}</li>
+                                {% else %}
+                                    <li class="li_parts">
+                                        <ul>
+                                            <li>Części:</li>
+                                        </ul>
+                                        <ul class="minifigure_part_list">
+                                            {% for part in item.parts %}
+                                            <li>{{ part.type + ':' + ' ' + part.id + ',' + ' ' + part.color }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </li>
+                                {% endif %}
+                                <li>
+                                    <form method="post">
+                                        <input type="submit" name="Edit" value="Edytuj">
+                                        <input type="submit" name="delete{{Storage.name}}{{Storage.collection.index(item)}}" value="X">
+                                    </form>
+                                </li>
+                            </ul>
+                        </section>
+                    {% endfor %}
+                </article>
+            </section>
+            {% endfor %}
+        </section>
+    </main>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
